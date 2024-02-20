@@ -1,7 +1,7 @@
 <template lang="pug">
 #app
 	router-view
-	Loading
+	Loading(v-if="loading")
 </template>
 
 <script>

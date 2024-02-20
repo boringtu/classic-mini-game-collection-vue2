@@ -70,7 +70,7 @@ export default class Container {
 		}
 		this.matrix = matrix;
 		// 重置当前游戏等级
-		this.level = 0;
+		this.level = 10;
 		// 开始游戏
 		this.next();
 	}
@@ -102,6 +102,7 @@ export default class Container {
 		// 停止前一个定时器
 		this.stopFalling();
 		// 开始下落定时器
+		console.log('speed: ', this.speed);
 		this._handleFalling = setInterval(() => this.fallOneStep(), this.speed);
 	}
 	// 停止下落
@@ -230,7 +231,7 @@ export default class Container {
 		// 将当前俄罗斯方块石化到容器矩阵模型中
 		for (let i = 0; i < yLen; i++) {
 			for (let j = 0; j < xLen; j++) {
-				containerMatrix[y + i][x + j] = tetrisMatrix[i][j];
+				containerMatrix[y + i][x + j] |= tetrisMatrix[i][j];
 			}
 		}
 		if (!lineIndexList.length) return;
@@ -242,14 +243,21 @@ export default class Container {
 	}
 	// 推送渲染数据
 	render() {
-		// const data = {
-		// 	matrix: this.matrix,
-		// 	current: this.currentTetris,
-		// 	next: this.nextTetris,
-		// 	gameover: this.gameover,
-		// 	lineIndexListToEliminate: this.lineIndexListToEliminate,
-		// };
-		this.renderCallback(this);
+		const data = {
+			width: this.width,
+			height: this.height,
+			readyHeight: this.readyHeight,
+			matrix: cloneModel(this.matrix),
+			currentTetris: this.currentTetris,
+			nextTetris: this.nextTetris,
+			level: this.level,
+			maxSpeed: this.maxSpeed,
+			rapid: this.rapid,
+			gameover: this.gameover,
+			lineIndexListToEliminate: this.lineIndexListToEliminate,
+			durationToEliminate: this.durationToEliminate,
+		};
+		this.renderCallback(data);
 	}
 }
 
