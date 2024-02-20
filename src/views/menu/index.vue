@@ -61,7 +61,8 @@ export default {
 					this.activeIndex = i;
 					break;
 				}
-				// 按 DOWN 切换到下一个游戏选项
+				// 按 SELECT 或 DOWN 切换到下一个游戏选项
+				case KEY_ENUM.SELECT:
 				case KEY_ENUM.S:
 				case KEY_ENUM.DOWN: {
 					let i = this.activeIndex + 1;
@@ -69,8 +70,7 @@ export default {
 					this.activeIndex = i;
 					break;
 				}
-				// 按 SELECT 或 START 开始选中的游戏
-				case KEY_ENUM.SELECT:
+				// 按 START 开始选中的游戏
 				case KEY_ENUM.START: {
 					const item = this.list[this.activeIndex];
 					this.$router.push(item.path);

@@ -21,8 +21,21 @@ moment.updateLocale('zh-cn', {
 
 import App from './App';
 import router from './router';
+import { sleep } from '@/libs/utils';
 
 Vue.config.productionTip = false;
+
+// TODO: 开发阶段，暂时屏蔽 loading 动画
+// router.beforeEach(async (to, from, next) => {
+// 	// 错开同步的执行栈，保证 App.vue 组件实例已创建
+// 	await sleep();
+// 	// 开始 loading 动画
+// 	Vue.prototype.$app.startLoading();
+// 	// loading 动画开头完全遮挡后面内容的 1s，然后 loading 动画继续的同时，开始加载下一页的内容
+// 	await sleep(1000);
+// 	// 加载下一页内容
+// 	next();
+// });
 
 new Vue({
 	router,
