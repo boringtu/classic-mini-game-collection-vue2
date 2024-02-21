@@ -96,7 +96,7 @@ export default {
 	flex-direction: column
 	align-items: center
 	padding-top: 20px
-	font-family: "8bit-cn"
+	font-family: "8bit"
 	font-size: 20px
 	h1
 		margin-top: 36px
@@ -133,7 +133,7 @@ export default {
 			span
 				vertical-align: middle
 				&.cname
-					font-family: "8bit"
+					font-family: "8bit-cn"
 					margin-left: 12px
 					color: #333
 </style>

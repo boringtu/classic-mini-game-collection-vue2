@@ -161,8 +161,8 @@ export default class Game {
 	 * @param {boolean} toLeft 是否向左移动
 	 */
 	move(toLeft = false) {
-		// 判断游戏是否已暂停
-		if (this.paused) return;
+		// 判断游戏是否已暂停或已 Game Over
+		if (this.paused || this.gameover) return;
 		const curr = this.currentTetris;
 		let { matrix: tetrisMatrix, position: { x, y } } = curr;
 		const toX = toLeft ? x - 1 : x + 1;
@@ -178,8 +178,8 @@ export default class Game {
 	 * @param {boolean} rapid - 当前是否是极速下落的状态
 	 */
 	fall(rapid = false) {
-		// 判断游戏是否已暂停
-		if (this.paused) return;
+		// 判断游戏是否已暂停或已 Game Over
+		if (this.paused || this.gameover) return;
 		// 设置当前是否是极速下落的状态
 		this.setRapid(rapid);
 		// 立即下落一格
@@ -212,15 +212,15 @@ export default class Game {
 	setRapid(rapid) {
 		// 变更当前是否是极速下落的状态
 		this.rapid = rapid;
-		// 判断游戏是否已暂停
-		if (this.paused) return;
+		// 判断游戏是否已暂停或已 Game Over
+		if (this.paused || this.gameover) return;
 		// 重新开始下落
 		this.startFalling();
 	}
 	// 当前俄罗斯方块旋转一次
 	async spin(clockwise = true) {
-		// 判断游戏是否已暂停
-		if (this.paused) return;
+		// 判断游戏是否已暂停或已 Game Over
+		if (this.paused || this.gameover) return;
 		const curr = this.currentTetris;
 		let { shape, spinStatus, position: { x, y } } = curr;
 		const [ originX, originY ] = [ x, y ];
@@ -376,13 +376,15 @@ export default class Game {
 		const curr = this.currentTetris;
 		const { matrix: tetrisMatrix, position: { x, y } } = curr;
 		const containerMatrix = this.matrix;
+		// 当前容器矩阵模型的列数
+		const xLen = containerMatrix[0].length;
 		// 当前俄罗斯方块矩阵模型的行数
-		const yLen = tetrisMatrix.length;
+		const yTLen = tetrisMatrix.length;
 		// 当前俄罗斯方块矩阵模型的列数
-		const xLen = tetrisMatrix[0].length;
+		const xTLen = tetrisMatrix[0].length;
 		// 将当前俄罗斯方块石化到容器矩阵模型中
-		for (let i = 0; i < yLen; i++) {
-			for (let j = 0; j < xLen; j++) {
+		for (let i = 0; i < yTLen; i++) {
+			for (let j = 0; j < xTLen; j++) {
 				containerMatrix[y + i][x + j] |= tetrisMatrix[i][j];
 			}
 		}
@@ -401,7 +403,7 @@ export default class Game {
 		// 累计本次消除得分
 		this.score += calcScore({ level, lines });
 		// 计算游戏等级
-		this.level = Math.ceil(this.lines / 30) - 1;
+		this.level = Math.floor(this.lines / 30);
 	}
 	// 推送渲染数据
 	render() {
@@ -425,11 +427,3 @@ export default class Game {
 		this.renderCallback(data);
 	}
 }
-
-// 
-// petrified 石化的
-// eliminable 可消除的
-// grid 格子
-// spin 旋转
-// falling rapidly 极速下落
-// frozen 冻结状态

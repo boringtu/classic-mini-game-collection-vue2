@@ -1,9 +1,9 @@
 @font-face {
-	font-family: "8bit";
+	font-family: "8bit-cn";
 	src: url("../../../public/static/fonts/MisekiBitmapMincho.ttf");
 }
 @font-face {
-	font-family: "8bit-cn";
+	font-family: "8bit";
 	src: url("../../../public/static/fonts/PressStart2P-Regular.ttf");
 }
 
