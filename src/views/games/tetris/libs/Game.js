@@ -118,11 +118,19 @@ export default class Game {
 		randomNextTetris();
 		// 初始化当前俄罗斯方块的位置（最上方中间的位置）
 		const x = Math.floor(this.width / 2 - curr.matrix[0].length / 2)
-		curr.setPosition(x, -2);
+		let y = -2;
 		// 验证当前俄罗斯方块位置初始化后，是否会产生碰撞导致 Game Over
-		if (this._checkGameOver()) return;
+		while (this._checkCollition(curr.matrix, { x, y })) {
+			// 只要进入这里，就已 Game Over
+			this.gameover = true;
+			// 将当前俄罗斯方块后退到一个不会产生碰撞的位置
+			y--;
+		}
+		// 设置当前俄罗斯方块的位置
+		curr.setPosition(x, y);
 		// 推送渲染数据
 		this.render();
+		if (this.gameover) return;
 		// 开始下落
 		this.startFalling();
 	}
@@ -155,8 +163,14 @@ export default class Game {
 			this.stopFalling();
 			// 重置当前是否是极速下落的状态
 			this.rapid = false;
-			// 判断是否已 Game Over
-			if (this._checkGameOver(true)) return;
+			// 验证下落过程中高度是否已超出容器高度导致 Game Over
+			if (y < 0) {
+				// 将游戏设置为已 Game Over
+				this.gameover = true;
+				// 推送渲染数据
+				this.render();
+				return;
+			}
 			// 尝试查找和消除俄罗斯方块，然后将当前俄罗斯方块石化到容器矩阵模型中
 			await this._eliminateAndPetrify();
 			// 初始化下一个俄罗斯方块
@@ -308,22 +322,9 @@ export default class Game {
 			}
 		}
 	}
-	// 判断是否已 Game Over（下落过程中高度是否已超出容器高度，或当前俄罗斯方块已产生碰撞）
-	_checkGameOver(falling = false) {
-		const curr = this.currentTetris;
-		let { matrix: tetrisMatrix, position: { x, y } } = curr;
-		// 高度是否已超出容器高度，或当前俄罗斯方块已产生碰撞
-		const gameover = (falling && y < 0) || this._checkCollition(tetrisMatrix, { x, y });
-		if (gameover) {
-			// 将游戏设置为已 Game Over
-			this.gameover = true;
-			// 推送渲染数据
-			this.render();
-		}
-		return gameover;
-	}
 	// 验证给定的俄罗斯方块矩阵模型是否碰撞
 	_checkCollition(tetrisMatrix, { x, y }) {
+		console.log(tetrisMatrix, x, y)
 		const containerMatrix = this.matrix;
 		// 给定俄罗斯方块矩阵模型的行数
 		const yLen = tetrisMatrix.length;
@@ -336,7 +337,8 @@ export default class Game {
 		// 判断：是否与容器底部的边界碰撞
 		if (yLen + y > this.height) return true;
 		// 判断：是否与容器中已有的俄罗斯方块碰撞
-		for (let i = 0; i < yLen && y + i >= 0; i++) {
+		for (let i = 0; i < yLen; i++) {
+			if (!containerMatrix[y + i]) continue;
 			for (let j = 0; j < xLen; j++) {
 				if (tetrisMatrix[i][j] & containerMatrix[y + i][x + j]) {
 					return true;

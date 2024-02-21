@@ -7,6 +7,7 @@
 				:key="`${i}-${j}`"
 				:data="grid"
 			)
+	.redline
 </template>
 
 <script>
@@ -86,6 +87,7 @@ export default {
 				// 当前俄罗斯方块矩阵模型的列数
 				const xTLen = tetrisMatrix[0].length;
 				for (let i = 0; i < yTLen; i++) {
+					if (!matrix[y + i + 2]) continue;
 					for (let j = 0; j < xTLen; j++) {
 						if (!tetrisMatrix[i][j]) continue;
 						matrix[y + i + 2][x + j] = new Grid({ color });
@@ -102,6 +104,7 @@ export default {
 <style lang="sass" scoped>
 .container-root
 	// opacity: .1
+	position: relative
 	border: 10px solid #fff
 	.grid-box
 		width: 509px
@@ -114,4 +117,13 @@ export default {
 			width: 50px
 			height: 50px
 			border-radius: 8px
+	.redline
+		position: absolute
+		z-index: 10
+		left: 0
+		bottom: calc(51px * 20 + 1px)
+		width: 100%
+		height: 1px
+		background-color: red
+		opacity: .25
 </style>
