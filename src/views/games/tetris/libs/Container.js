@@ -70,7 +70,7 @@ export default class Container {
 		}
 		this.matrix = matrix;
 		// 重置当前游戏等级
-		this.level = 10;
+		this.level = 0;
 		// 开始游戏
 		this.next();
 	}
@@ -83,6 +83,8 @@ export default class Container {
 			// 将随机获取的俄罗斯方块设置为下一个俄罗斯方块
 			this.nextTetris = new TETRIS_SHAPE_CLASS_MAP[shape](spinStatus);
 		}
+		// 重置极速下落状态
+		this.rapid = false;
 		// 开始游戏时设置第一个俄罗斯方块
 		if (!this.nextTetris) randomNextTetris();
 		// 将下一个俄罗斯方块设置为当前俄罗斯方块
@@ -94,6 +96,8 @@ export default class Container {
 		curr.setPosition(x, -2);
 		// 验证当前俄罗斯方块位置初始化后，是否会产生碰撞导致 Game Over
 		if (this._checkGameOver()) return;
+		// 推送渲染数据
+		this.render();
 		// 开始下落
 		this.startFalling();
 	}
@@ -128,20 +132,36 @@ export default class Container {
 			this.rapid = false;
 			// 判断是否已 Game Over
 			if (this._checkGameOver(true)) return;
-			// 尝试查找和消除俄罗斯方块，然后将俄罗斯方块石化到容器矩阵模型中
+			// 尝试查找和消除俄罗斯方块，然后将当前俄罗斯方块石化到容器矩阵模型中
 			await this._eliminateAndPetrify();
 			// 初始化下一个俄罗斯方块
 			this.next();
 		}
 	}
 	/**
-	 * 下落
+	 * 移动当前俄罗斯方块（只能横向移动）
+	 * @param {boolean} toLeft 是否向左移动
+	 */
+	move(toLeft = false) {
+		const curr = this.currentTetris;
+		let { matrix: tetrisMatrix, position: { x, y } } = curr;
+		const toX = toLeft ? x - 1 : x + 1;
+		// 验证当前俄罗斯方块是否可以向指定方向横向移动
+		const willCollide = this._checkCollition(tetrisMatrix, { x: toX, y });
+		if (willCollide) return;
+		curr.setPosition(toX, y);
+		// 推送渲染数据
+		this.render();
+	}
+	/**
+	 * 改变降落速度（主动极速下落，或者按当前等级默认速度下落）
 	 * @param {boolean} rapid - 当前是否是极速下落的状态
 	 */
-	fall(rapid = true) {
-		if (rapid === this.rapid) return;
+	fall(rapid = false) {
 		// 变更当前是否是极速下落的状态
 		this.rapid = rapid;
+		// 立即下落一格
+		this.fallOneStep();
 		// 重新开始下落
 		this.startFalling();
 	}
@@ -192,18 +212,24 @@ export default class Container {
 		}
 		return false;
 	}
-	// 尝试查找和消除俄罗斯方块，然后将俄罗斯方块石化到容器矩阵模型中
+	// 尝试查找和消除俄罗斯方块，然后将当前俄罗斯方块石化到容器矩阵模型中
 	async _eliminateAndPetrify() {
 		const lineIndexList = this.lineIndexListToEliminate = [];
 		const curr = this.currentTetris;
-		const { matrix: tetrisMatrix, position: { y } } = curr;
+		const { matrix: tetrisMatrix, position: { x, y } } = curr;
 		const containerMatrix = this.matrix;
 		// 当前俄罗斯方块矩阵模型的行数
 		const yLen = tetrisMatrix.length;
+		// 当前俄罗斯方块矩阵模型的列数
+		const xLen = tetrisMatrix[0].length;
 		for (let i = 0; i < yLen && y + i >= 0; i++) {
+			const currentLine = cloneModel(containerMatrix[y + i]);
+			for (let j = 0; j < xLen; j++) {
+				currentLine[x + j] |= tetrisMatrix[i][j];
+			}
 			// 判断是否当前行是否可消除
-			const isFullLine = [ ...tetrisMatrix[i], ...containerMatrix[y + i] ].every((n) => n);
-			if (isFullLine) lineIndexList.push(i);
+			const isFullLine = currentLine.every((n) => n);
+			if (isFullLine) lineIndexList.push(y + i);
 		}
 		if (lineIndexList.length) {
 			// 推送渲染数据
@@ -238,7 +264,7 @@ export default class Container {
 		// 移除可消除的层
 		lineIndexList.forEach((i) => {
 			containerMatrix.splice(i, 1);
-			containerMatrix.shift(new Array(xLen).fill(0));
+			containerMatrix.unshift(new Array(xLen).fill(0));
 		});
 	}
 	// 推送渲染数据

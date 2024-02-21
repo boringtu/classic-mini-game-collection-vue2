@@ -11,8 +11,8 @@ export const KEY_ENUM = {
 	'RIGHT': 39, // right
 	'SELECT': 71, // g
 	'START': 72, // h
-	'B': 74, // j
-	'A': 75, // k
+	'SINGLE_B': 74, // j
+	'SINGLE_A': 75, // k
 	'TURBO_B': 85, // u
 	'TURBO_A': 73, // i
 };
@@ -29,8 +29,8 @@ export const KEY_DICT = {
 	[KEY_ENUM.RIGHT]: 'RIGHT',
 	[KEY_ENUM.SELECT]: 'SELECT',
 	[KEY_ENUM.START]: 'START',
-	[KEY_ENUM.B]: 'B',
-	[KEY_ENUM.A]: 'A',
+	[KEY_ENUM.SINGLE_B]: 'B',
+	[KEY_ENUM.SINGLE_A]: 'A',
 	[KEY_ENUM.TURBO_B]: 'TURBO B',
 	[KEY_ENUM.TURBO_A]: 'TURBO A',
 };

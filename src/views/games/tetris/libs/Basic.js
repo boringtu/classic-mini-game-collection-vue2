@@ -3,30 +3,24 @@ import { spinMatrix } from './utils';
 
 // 最小俄罗斯方块单位
 export class Grid {
-	// 横坐标
-	_x = -10;
-	// 纵坐标
-	_y = -10;
 	// 颜色
 	_color = TETRIS_LEVEL_COLOR_LIST[0];
 	/**
 	 * 构造函数
-	 * @param {number} x - 横坐标
-	 * @param {number} y - 纵坐标
 	 * @param {string} color - 颜色
 	 */
-	constructor({ x = -1, y = -1, color = TETRIS_LEVEL_COLOR_LIST[0] }) {
-		this._x = x;
-		this._y = y;
+	constructor({ color = TETRIS_LEVEL_COLOR_LIST[0] }) {
 		this._color = color;
 	}
-	get position() {
-		return { x: this._x, y: this._y };
+	get color() {
+		return this._color;
+	}
+	// 设置颜色
+	setColor(color) {
+		this._color = color;
 	}
 	toString() {
 		const data = {
-			x: this._x,
-			y: this._y,
 			color: this._color,
 		}
 		return JSON.stringify(data);
@@ -35,6 +29,10 @@ export class Grid {
 
 // 俄罗斯方块基类
 class TetrisShape extends Grid {
+	// 横坐标
+	_x = -10;
+	// 纵坐标
+	_y = -10;
 	// 形状
 	_shape = null;
 	// 旋转状态
@@ -53,6 +51,9 @@ class TetrisShape extends Grid {
 		this._shape = shape;
 		// 设置当前俄罗斯方块的旋转状态
 		this.setSpinStatus(spinStatus);
+	}
+	get position() {
+		return { x: this._x, y: this._y };
 	}
 	get shape() {
 		return this._shape;
