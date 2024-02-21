@@ -49,6 +49,12 @@ export default {
 				case 32: {
 					// TODO: TEST CODE
 					window._debugging = true;
+					// this.game.restart();
+					break;
+				}
+				// 按 START 键 暂停游戏 / 开始游戏 或 重新开始游戏
+				case KEY_ENUM.START: {
+					this.game.pause();
 					break;
 				}
 				// 按 A 或 LEFT 向左移动当前俄罗斯方块

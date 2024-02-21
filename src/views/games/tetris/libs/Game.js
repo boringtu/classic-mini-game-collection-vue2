@@ -27,10 +27,14 @@ export default class Game {
 	rapid = false;
 	// 是否已 Game Over
 	gameover = false;
+	// 是否已暂停
+	paused = false;
 	// 需要消除的行下标列表
 	lineIndexListToEliminate = [];
 	// 消除行的动画时长
 	durationToEliminate = 500;
+	// 已消除的行数
+	lines = 0;
 
 	// 获取单例
 	static getInstance(renderCallback) {
@@ -42,11 +46,12 @@ export default class Game {
 	// 构造函数 设置容器宽度和高度
 	constructor(renderCallback) {
 		this.renderCallback = renderCallback;
-		// 通过 reset 初始化游戏
-		this.reset();
+		// 通过 restart 初始化游戏
+		this.restart();
 	}
 	// 销毁容器
 	destroy() {
+		this.stopFalling();
 		this.matrix = null;
 		this.currentTetris = null;
 		this.nextTetris = null;
@@ -60,9 +65,7 @@ export default class Game {
 		return ms < 100 ? 100 : ms;
 	}
 	// 重置游戏
-	reset() {
-		// 重置 Game Over 状态
-		this.gameover = false;
+	restart() {
 		const { width, height } = this;
 		// 初始化容器矩阵模型
 		const matrix = new Array(height);
@@ -70,8 +73,18 @@ export default class Game {
 			matrix[i] = new Array(width).fill(0);
 		}
 		this.matrix = matrix;
+		// 重置当前俄罗斯方块
+		this.currentTetris = null;
+		// 重置下一个俄罗斯方块
+		this.nextTetris = null;
 		// 重置当前游戏等级
 		this.level = 0;
+		// 重置 Game Over 状态
+		this.gameover = false;
+		// 重置暂停状态
+		this.paused = false;
+		// 重置已消除的行数
+		this.lines = 0;
 		// 开始游戏
 		this.next();
 	}
@@ -144,6 +157,8 @@ export default class Game {
 	 * @param {boolean} toLeft 是否向左移动
 	 */
 	move(toLeft = false) {
+		// 判断游戏是否已暂停
+		if (this.paused) return;
 		const curr = this.currentTetris;
 		let { matrix: tetrisMatrix, position: { x, y } } = curr;
 		const toX = toLeft ? x - 1 : x + 1;
@@ -159,21 +174,51 @@ export default class Game {
 	 * @param {boolean} rapid - 当前是否是极速下落的状态
 	 */
 	fall(rapid = false) {
+		// 判断游戏是否已暂停
+		if (this.paused) return;
+		// 设置当前是否是极速下落的状态
 		this.setRapid(rapid);
 		// 立即下落一格
 		this.fallOneStep();
+	}
+	/**
+	 * 暂停游戏
+	 */
+	pause() {
+		// 如果已经 Game Over，则重新开始游戏
+		if (this.gameover) return this.restart();
+		// 如果当前是已暂停状态，则恢复游戏
+		if (this.paused) {
+			// 设置暂停状态为正常游戏状态
+			this.paused = false;
+			// 继续下落
+			this.startFalling();
+			// 推送渲染数据
+			this.render();
+		} else {
+			// 设置暂停状态为暂停游戏状态
+			this.paused = true;
+			// 停止下落
+			this.stopFalling();
+			// 推送渲染数据
+			this.render();
+		}
 	}
 	// 改变降落速度（主动极速下落，或者按当前等级默认速度下落）
 	setRapid(rapid) {
 		// 变更当前是否是极速下落的状态
 		this.rapid = rapid;
+		// 判断游戏是否已暂停
+		if (this.paused) return;
 		// 重新开始下落
 		this.startFalling();
 	}
 	// 当前俄罗斯方块旋转一次
 	async spin(clockwise = true) {
+		// 判断游戏是否已暂停
+		if (this.paused) return;
 		const curr = this.currentTetris;
-		let { shape, spinStatus, matrix: tetrisMatrix, position: { x, y } } = curr;
+		let { shape, spinStatus, position: { x, y } } = curr;
 		const [ originX, originY ] = [ x, y ];
 		if (shape === TETRIS_SHAPE_ENUM.O) return;
 		spinStatus = (spinStatus + (clockwise ? 1 : -1) + 4) % 4;
@@ -357,6 +402,7 @@ export default class Game {
 			maxSpeed: this.maxSpeed,
 			rapid: this.rapid,
 			gameover: this.gameover,
+			paused: this.paused,
 			lineIndexListToEliminate: this.lineIndexListToEliminate,
 			durationToEliminate: this.durationToEliminate,
 		};
