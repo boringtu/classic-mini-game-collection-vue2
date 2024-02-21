@@ -46,6 +46,11 @@ export default {
 					this.game.stopFalling();
 					break;
 				}
+				case 32: {
+					// TODO: TEST CODE
+					window._debugging = true;
+					break;
+				}
 				// 按 A 或 LEFT 向左移动当前俄罗斯方块
 				case KEY_ENUM.A:
 				case KEY_ENUM.LEFT: {
@@ -73,6 +78,40 @@ export default {
 					this.game.fall();
 					break;
 				}
+				// 按 TURBO_A 或 SINGLE_A 顺时针转动当前俄罗斯方块
+				case KEY_ENUM.TURBO_A:
+				case KEY_ENUM.SINGLE_A: {
+					if (event.keyCode === KEY_ENUM.TURBO_A) {
+						if (keyMap[KEY_ENUM.TURBO_A]) return;
+						keyMap[KEY_ENUM.TURBO_A] = 1;
+						this.spinContinuously(true);
+					} else {
+						if (keyMap[KEY_ENUM.SINGLE_A]) return;
+						keyMap[KEY_ENUM.SINGLE_A] = 1;
+						// 停止之前的旋转相关的定时器
+						clearTimeout(this._handleSpinTimeout);
+						clearInterval(this._handleSpinInterval);
+					}
+					this.game.spin(true);
+					break;
+				}
+				// 按 TURBO_B 或 SINGLE_B 逆时针转动当前俄罗斯方块
+				case KEY_ENUM.TURBO_B:
+				case KEY_ENUM.SINGLE_B: {
+					if (event.keyCode === KEY_ENUM.TURBO_B) {
+						if (keyMap[KEY_ENUM.TURBO_B]) return;
+						keyMap[KEY_ENUM.TURBO_B] = 1;
+						this.spinContinuously(false);
+					} else {
+						if (keyMap[KEY_ENUM.SINGLE_B]) return;
+						keyMap[KEY_ENUM.SINGLE_B] = 1;
+						// 停止之前的旋转相关的定时器
+						clearTimeout(this._handleSpinTimeout);
+						clearInterval(this._handleSpinInterval);
+					}
+					this.game.spin(false);
+					break;
+				}
 			}
 		},
 		handleKeyup(event) {
@@ -96,6 +135,16 @@ export default {
 					this.game.setRapid(false);
 					break;
 				}
+				// 松开 TURBO_A 或 SINGLE_A 或 TURBO_B 或 SINGLE_B 停止转动当前俄罗斯方块
+				case KEY_ENUM.TURBO_A:
+				case KEY_ENUM.SINGLE_A:
+				case KEY_ENUM.TURBO_B:
+				case KEY_ENUM.SINGLE_B: {
+					delete keyMap[event.keyCode];
+					clearTimeout(this._handleSpinTimeout);
+					clearInterval(this._handleSpinInterval);
+					break;
+				}
 			}
 		},
 		// 连续平移
@@ -117,6 +166,18 @@ export default {
 			// 开始本次下落相关的定时器
 			this._handleFallTimeout = setTimeout(() => {
 				this.game.fall(true);
+			}, keyTurboDelay);
+		},
+		// 连续旋转
+		spinContinuously(clockwise) {
+			// 停止之前的旋转相关的定时器
+			clearTimeout(this._handleSpinTimeout);
+			clearInterval(this._handleSpinInterval);
+			// 开始本次旋转相关的定时器
+			this._handleSpinTimeout = setTimeout(() => {
+				this._handleSpinInterval = setInterval(() => {
+					this.game.spin(clockwise);
+				}, 200);
 			}, keyTurboDelay);
 		},
 		renderCallback(data) {

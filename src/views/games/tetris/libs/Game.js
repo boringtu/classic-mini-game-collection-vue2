@@ -1,6 +1,7 @@
 import { sleep } from '@/libs/utils';
 import { TETRIS_SHAPE_CLASS_MAP } from './Basic';
-import { cloneModel, getRandomTetris } from './utils';
+import { cloneModel, getRandomTetris, spinMatrix } from './utils';
+import { TETRIS_SHAPE_ENUM, TETRIS_SHAPE_MATRIX } from './consts';
 
 /**
  * 俄罗斯方块游戏类（单例）
@@ -170,14 +171,86 @@ export default class Game {
 		this.startFalling();
 	}
 	// 当前俄罗斯方块旋转一次
-	spin(clockwise = true) {
+	async spin(clockwise = true) {
 		const curr = this.currentTetris;
-		let { shape, spinStatus, matrix, position: { x, y } } = curr;
-		// TODO: 验证是否可旋转（是否被横向阻挡，正常旋转，或左移一格）
-
-		spinStatus = (spinStatus + (clockwise ? 1 : -1)) % 4;
-		curr.setSpinStatus(spinStatus);
-		// TODO: 验证当前俄罗斯方块旋转后，是否会产生碰撞
+		let { shape, spinStatus, matrix: tetrisMatrix, position: { x, y } } = curr;
+		const [ originX, originY ] = [ x, y ];
+		if (shape === TETRIS_SHAPE_ENUM.O) return;
+		spinStatus = (spinStatus + (clockwise ? 1 : -1) + 4) % 4;
+		// 验证是否可旋转（是否被横向阻挡，正常旋转，或左移一格）
+		const replicaMatrix = spinMatrix(TETRIS_SHAPE_MATRIX[shape], spinStatus);
+		let willCollide = true;
+		for (let times = 1; times <= 4; times++) {
+			willCollide = this._checkCollition(replicaMatrix, { x, y });
+			if (times === 1) {
+				// 第 1 次尝试（原地旋转）
+				if (willCollide) {
+					// 会产生碰撞，左移 1 格 再试
+					x--;
+					continue;
+				} else {
+					// 不会产生碰撞，正常旋转
+					curr.setSpinStatus(spinStatus);
+					// 推送渲染数据
+					this.render();
+					break;
+				}
+			} else if (times === 2) {
+				// 第 2 次尝试（旋转后左移 1 格）
+				if (willCollide) {
+					// 会产生碰撞
+					if (shape === TETRIS_SHAPE_ENUM.LINE) {
+						// 如果是线型方块，再左移 1 格 再试
+						x--;
+						continue;
+					} else {
+						// 如果不是线型方块，跳过第 3 次尝试，回原位并后退一格，进行第 4 次尝试
+						times++;
+						x = originX;
+						y = originY - 1;
+						continue;
+					}
+				} else {
+					// 不会产生碰撞，正常旋转
+					curr.setSpinStatus(spinStatus);
+					curr.setPosition(x, y);
+					// 推送渲染数据
+					this.render();
+					break;
+				}
+			} else if (times === 3 && shape === TETRIS_SHAPE_ENUM.LINE) {
+				// 第 3 次尝试（旋转后左移 2 格）（只针对线型方块）
+				if (willCollide) {
+					// 会产生碰撞，则不可旋转
+					return;
+				} else {
+					// 不会产生碰撞，正常旋转
+					curr.setSpinStatus(spinStatus);
+					curr.setPosition(x, y);
+					// 推送渲染数据
+					this.render();
+					break;
+				}
+			} else if (times === 4) {
+				// 第 4 次尝试（回原位并后退一格）
+				if (willCollide) {
+					// 会产生碰撞，直接 Game Over
+					this.gameover = true;
+					// 推送渲染数据
+					this.render();
+					return;
+				} else {
+					// 不会产生碰撞，则按目前的旋转状态和位置开始尝试消除和石化流程
+					curr.setSpinStatus(spinStatus);
+					curr.setPosition(x, y);
+					// 尝试查找和消除俄罗斯方块，然后将当前俄罗斯方块石化到容器矩阵模型中
+					await this._eliminateAndPetrify();
+					// 初始化下一个俄罗斯方块
+					this.next();
+					break;
+				}
+			}
+		}
 	}
 	// 判断是否已 Game Over（下落过程中高度是否已超出容器高度，或当前俄罗斯方块已产生碰撞）
 	_checkGameOver(falling = false) {
