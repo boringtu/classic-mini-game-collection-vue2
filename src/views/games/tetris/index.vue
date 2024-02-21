@@ -1,17 +1,17 @@
 <template lang="pug">
 .root
-	ContainerView(v-if="gameData" v-bind="gameData")
+	Container(v-if="gameData" v-bind="gameData")
 </template>
 
 <script>
 import _ from 'lodash';
-import ContainerView from './components/Container';
+import Container from './components/Container';
 import { KEY_ENUM } from '@/assets/js/dicts';
-import Container from './libs/Container';
+import Game from './libs/Game';
 
 export default {
 	components: {
-		ContainerView,
+		Container,
 	},
 	data() {
 		return {
@@ -22,7 +22,7 @@ export default {
 	},
 	mounted() {
 		window.x = this;
-		this.container = Container.getInstance(this.renderCallback);
+		this.container = Game.getInstance(this.renderCallback);
 		window.container = this.container;
 
 		document.addEventListener('keydown', this.handleKeydown);

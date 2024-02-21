@@ -3,9 +3,9 @@ import { TETRIS_SHAPE_CLASS_MAP } from './Basic';
 import { cloneModel, getRandomTetris } from './utils';
 
 /**
- * 俄罗斯方块容器类（单例）
+ * 俄罗斯方块游戏类（单例）
  */
-export default class Container {
+export default class Game {
 	// 容器的宽度（格数）
 	width = 10;
 	// 容器的高度（格数）
@@ -33,10 +33,10 @@ export default class Container {
 
 	// 获取单例
 	static getInstance(renderCallback) {
-		if (!Container.instance) {
-			Container.instance = new Container(renderCallback);
+		if (!Game.instance) {
+			Game.instance = new Game(renderCallback);
 		}
-		return Container.instance;
+		return Game.instance;
 	}
 	// 构造函数 设置容器宽度和高度
 	constructor(renderCallback) {
@@ -50,7 +50,7 @@ export default class Container {
 		this.currentTetris = null;
 		this.nextTetris = null;
 		this.lineIndexListToEliminate = [];
-		Container.instance = null;
+		Game.instance = null;
 	}
 	// 获取当前游戏等级的下落速度
 	get speed() {
