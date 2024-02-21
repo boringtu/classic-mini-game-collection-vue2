@@ -82,9 +82,22 @@ export const ELIMINATION_TYPE_ENUM = {
 	TRIPLE: 3, // 一次性消除 3 行
 	QUADRA: 4, // 一次性消除 4 行
 };
+// 消除类型基础数据字典
 export const ELIMINATION_TYPE_DICT = {
-	[ELIMINATION_TYPE_ENUM.SINGLE]: 'SINGLE',
-	[ELIMINATION_TYPE_ENUM.DOUBLE]: 'DOUBLE',
-	[ELIMINATION_TYPE_ENUM.TRIPLE]: 'TRIPLE',
-	[ELIMINATION_TYPE_ENUM.QUADRA]: 'QUADRA',
+	[ELIMINATION_TYPE_ENUM.SINGLE]: {
+		label: 'SINGLE',
+		score: 40,
+	},
+	[ELIMINATION_TYPE_ENUM.DOUBLE]: {
+		label: 'DOUBLE',
+		score: 100,
+	},
+	[ELIMINATION_TYPE_ENUM.TRIPLE]: {
+		label: 'TRIPLE',
+		score: 300,
+	},
+	[ELIMINATION_TYPE_ENUM.QUADRA]: {
+		label: 'QUADRA',
+		score: 1200,
+	},
 };

@@ -188,6 +188,7 @@ export default {
 		},
 		renderCallback(data) {
 			this.gameData = data;
+			console.log('score:', data.score, 'lines:', data.lines, 'level:', data.level);
 			// console.log(_.cloneDeep(data));
 		},
 	},

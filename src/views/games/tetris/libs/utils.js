@@ -1,4 +1,4 @@
-import { TETRIS_SPIN_STATUS_ENUM } from './consts';
+import { ELIMINATION_TYPE_DICT, TETRIS_SPIN_STATUS_ENUM } from './consts';
 
 /**
  * clone 数据模型（只支持纯 JSON 数据模型 object | array）
@@ -52,3 +52,13 @@ export const getRandomTetris = () => {
 	return { shape, spinStatus };
 }
 
+/**
+ * 计算单次消除得分
+ * @param {number} level 当前游戏等级 
+ * @param {number} lines 单次消除行数 
+ * @return {number} 本次消除得分
+ */
+export const calcScore = ({ level, lines }) => {
+	const { score } = ELIMINATION_TYPE_DICT[lines];
+	return score * ( level + 1 );
+};

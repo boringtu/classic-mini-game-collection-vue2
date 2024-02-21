@@ -1,6 +1,6 @@
 import { sleep } from '@/libs/utils';
 import { TETRIS_SHAPE_CLASS_MAP } from './Basic';
-import { cloneModel, getRandomTetris, spinMatrix } from './utils';
+import { calcScore, cloneModel, getRandomTetris, spinMatrix } from './utils';
 import { TETRIS_SHAPE_ENUM, TETRIS_SHAPE_MATRIX } from './consts';
 
 /**
@@ -19,6 +19,10 @@ export default class Game {
 	currentTetris = null;
 	// 下一个俄罗斯方块实例
 	nextTetris = null;
+	// 得分
+	score = 0;
+	// 已消除的行数
+	lines = 0;
 	// 当前游戏等级
 	level = 0;
 	// 极速下落的速度
@@ -33,8 +37,6 @@ export default class Game {
 	lineIndexListToEliminate = [];
 	// 消除行的动画时长
 	durationToEliminate = 500;
-	// 已消除的行数
-	lines = 0;
 
 	// 获取单例
 	static getInstance(renderCallback) {
@@ -85,6 +87,8 @@ export default class Game {
 		this.paused = false;
 		// 重置已消除的行数
 		this.lines = 0;
+		// 重置得分
+		this.score = 0;
 		// 开始游戏
 		this.next();
 	}
@@ -388,6 +392,16 @@ export default class Game {
 			containerMatrix.splice(i, 1);
 			containerMatrix.unshift(new Array(xLen).fill(0));
 		});
+		// 当前游戏等级
+		const { level } = this;
+		// 本次消除行数
+		const lines = lineIndexList.length;
+		// 累计消除行数
+		this.lines += lines;
+		// 累计本次消除得分
+		this.score += calcScore({ level, lines });
+		// 计算游戏等级
+		this.level = Math.ceil(this.lines / 30) - 1;
 	}
 	// 推送渲染数据
 	render() {
@@ -398,6 +412,8 @@ export default class Game {
 			matrix: cloneModel(this.matrix),
 			currentTetris: this.currentTetris,
 			nextTetris: this.nextTetris,
+			score: this.score,
+			lines: this.lines,
 			level: this.level,
 			maxSpeed: this.maxSpeed,
 			rapid: this.rapid,
