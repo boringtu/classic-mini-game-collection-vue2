@@ -22,8 +22,8 @@ export default {
 	},
 	mounted() {
 		window.x = this;
-		this.container = Game.getInstance(this.renderCallback);
-		window.container = this.container;
+		this.game = Game.getInstance(this.renderCallback);
+		window.game = this.game;
 
 		document.addEventListener('keydown', this.handleKeydown);
 		document.addEventListener('keyup', this.handleKeyup);
@@ -31,32 +31,32 @@ export default {
 	beforeDestroy() {
 		document.removeEventListener('keydown', this.handleKeydown);
 		document.removeEventListener('keyup', this.handleKeyup);
-		this.container.destroy();
+		this.game.destroy();
 	},
 	methods: {
 		handleKeydown(event) {
 			switch (event.keyCode) {
 				case 90: {
 					// z
-					this.container.stopFalling();
+					this.game.stopFalling();
 					break;
 				}
 				// 按 A 或 LEFT 向左移动当前俄罗斯方块
 				case KEY_ENUM.A:
 				case KEY_ENUM.LEFT: {
-					this.container.move(true);
+					this.game.move(true);
 					break;
 				}
 				// 按 D 或 RIGHT 向右移动当前俄罗斯方块
 				case KEY_ENUM.D:
 				case KEY_ENUM.RIGHT: {
-					this.container.move(false);
+					this.game.move(false);
 					break;
 				}
 				// 按 S 或 DOWN 向下移动当前俄罗斯方块
 				case KEY_ENUM.S:
 				case KEY_ENUM.DOWN: {
-					this.container.fall();
+					this.game.fall();
 					break;
 				}
 			}
