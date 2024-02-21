@@ -1,11 +1,13 @@
 <template lang="pug">
 .root
 	Container(v-if="gameData" v-bind="gameData")
+	Panel(v-if="gameData" v-bind="gameData")
 </template>
 
 <script>
 import _ from 'lodash';
 import Container from './components/Container';
+import Panel from './components/Panel';
 import { KEY_ENUM } from '@/assets/js/dicts';
 import Game from './libs/Game';
 
@@ -17,6 +19,7 @@ const keyTurboDelay = 200;
 export default {
 	components: {
 		Container,
+		Panel,
 	},
 	data() {
 		return {
@@ -188,7 +191,7 @@ export default {
 		},
 		renderCallback(data) {
 			this.gameData = data;
-			console.log('score:', data.score, 'lines:', data.lines, 'level:', data.level);
+			// console.log('score:', data.score, 'lines:', data.lines, 'level:', data.level);
 			// console.log(_.cloneDeep(data));
 		},
 	},
@@ -206,4 +209,5 @@ export default {
 	display: flex
 	justify-content: center
 	align-items: center
+	font-family: "8bit"
 </style>

@@ -62,3 +62,12 @@ export const calcScore = ({ level, lines }) => {
 	const { score } = ELIMINATION_TYPE_DICT[lines];
 	return score * ( level + 1 );
 };
+
+/**
+ * 计算俄罗斯方块 background-image 值
+ * @param {string} color 带 # 的 16 进制颜色值
+ * @return {string} background-image 值
+ */
+export const calcGridBackgroundImage = (color) => {
+	return `linear-gradient(135deg, ${color}30 0%, ${color} 25%, ${color} 75%, ${color}30 100%)`;
+};

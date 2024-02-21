@@ -25,6 +25,8 @@ export default class Game {
 	lines = 0;
 	// 当前游戏等级
 	level = 0;
+	// 统计数据
+	stats = {};
 	// 极速下落的速度
 	maxSpeed = 60;
 	// 当前是否是极速下落的状态
@@ -57,7 +59,8 @@ export default class Game {
 		this.matrix = null;
 		this.currentTetris = null;
 		this.nextTetris = null;
-		this.lineIndexListToEliminate = [];
+		this.stats = null;
+		this.lineIndexListToEliminate = null;
 		Game.instance = null;
 	}
 	// 获取当前游戏等级的下落速度
@@ -81,6 +84,10 @@ export default class Game {
 		this.nextTetris = null;
 		// 重置当前游戏等级
 		this.level = 0;
+		// 重置统计数据
+		const stats = {};
+		Object.values(TETRIS_SHAPE_ENUM).forEach((v) => stats[v] = 0);
+		this.stats = stats;
 		// 重置 Game Over 状态
 		this.gameover = false;
 		// 重置暂停状态
@@ -374,7 +381,7 @@ export default class Game {
 	_petrifyTetrisToContainer() {
 		const lineIndexList = this.lineIndexListToEliminate;
 		const curr = this.currentTetris;
-		const { matrix: tetrisMatrix, position: { x, y } } = curr;
+		const { shape, matrix: tetrisMatrix, position: { x, y } } = curr;
 		const containerMatrix = this.matrix;
 		// 当前容器矩阵模型的列数
 		const xLen = containerMatrix[0].length;
@@ -388,6 +395,8 @@ export default class Game {
 				containerMatrix[y + i][x + j] |= tetrisMatrix[i][j];
 			}
 		}
+		// 累计统计数据
+		this.stats[shape]++;
 		if (!lineIndexList.length) return;
 		// 移除可消除的层
 		lineIndexList.forEach((i) => {
@@ -417,6 +426,7 @@ export default class Game {
 			score: this.score,
 			lines: this.lines,
 			level: this.level,
+			stats: this.stats,
 			maxSpeed: this.maxSpeed,
 			rapid: this.rapid,
 			gameover: this.gameover,

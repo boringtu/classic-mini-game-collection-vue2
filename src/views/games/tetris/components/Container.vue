@@ -1,17 +1,16 @@
 <template lang="pug">
 .container-root
 	.grid-box
-		template(
-			v-for="(row, i) in integratedMatrix"
-		)
-			.grid(
-				v-for="(n, j) in row"
+		template(v-for="(row, i) in integratedMatrix")
+			GridView(
+				v-for="(grid, j) in row"
 				:key="`${i}-${j}`"
-				:style="{ backgroundColor: n ? '#fff' : 'transparent' }"
+				:data="grid"
 			)
 </template>
 
 <script>
+import GridView from './Grid';
 import { cloneModel } from '../libs/utils';
 import { Grid } from '../libs/Basic';
 import { TETRIS_LEVEL_COLOR_LIST } from '../libs/consts';
@@ -23,6 +22,9 @@ export default {
 		matrix: Array,
 		currentTetris: Object,
 		level: Number,
+	},
+	components: {
+		GridView,
 	},
 	data() {
 		return {
@@ -58,9 +60,7 @@ export default {
 		},
 		// 综合矩阵模型（包含合并了准备阶段的容器矩阵模型，以及当前俄罗斯方块矩阵模型）
 		integratedMatrix() {
-			const { currentTetris, combinedMatrix, containerMatrix, level } = this;
-			// console.log('containerMatrix', containerMatrix);
-			// console.log('combinedMatrix', combinedMatrix);
+			const { currentTetris, combinedMatrix, level } = this;
 			// 合并了准备阶段的容器矩阵模型的行数
 			const yLen = combinedMatrix.length;
 			// 合并了准备阶段的容器矩阵模型的列数
@@ -88,8 +88,6 @@ export default {
 				for (let i = 0; i < yTLen; i++) {
 					for (let j = 0; j < xTLen; j++) {
 						if (!tetrisMatrix[i][j]) continue;
-						// console.log('y: ', y, 'x: ', x, 'yTLen: ', yTLen, 'xTLen: ', xTLen, 'i: ', i, 'j: ', j, 'matrix: ', matrix);
-						// console.log(y + i + 2, x + j + 2);
 						matrix[y + i + 2][x + j] = new Grid({ color });
 					}
 				}
@@ -103,7 +101,7 @@ export default {
 
 <style lang="sass" scoped>
 .container-root
-	opacity: .1
+	// opacity: .1
 	border: 10px solid #fff
 	.grid-box
 		width: 509px
