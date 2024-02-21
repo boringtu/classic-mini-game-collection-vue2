@@ -106,7 +106,7 @@ export default class Game {
 		// 停止前一个定时器
 		this.stopFalling();
 		// 开始下落定时器
-		console.log('speed: ', this.speed);
+		// console.log('speed: ', this.speed);
 		this._handleFalling = setInterval(() => this.fallOneStep(), this.speed);
 	}
 	// 停止下落
@@ -154,14 +154,18 @@ export default class Game {
 		this.render();
 	}
 	/**
-	 * 改变降落速度（主动极速下落，或者按当前等级默认速度下落）
+	 * 主动触发下落，同时改变降落速度
 	 * @param {boolean} rapid - 当前是否是极速下落的状态
 	 */
 	fall(rapid = false) {
-		// 变更当前是否是极速下落的状态
-		this.rapid = rapid;
+		this.setRapid(rapid);
 		// 立即下落一格
 		this.fallOneStep();
+	}
+	// 改变降落速度（主动极速下落，或者按当前等级默认速度下落）
+	setRapid(rapid) {
+		// 变更当前是否是极速下落的状态
+		this.rapid = rapid;
 		// 重新开始下落
 		this.startFalling();
 	}

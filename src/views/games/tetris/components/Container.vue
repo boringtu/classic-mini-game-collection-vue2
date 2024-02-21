@@ -42,7 +42,7 @@ export default {
 		// 准备阶段的矩阵模型
 		readyMatrix() {
 			const { width, readyHeight } = this;
-			console.log('readyHeight', readyHeight);
+			// console.log('readyHeight', readyHeight);
 			const readyMatrix = new Array(readyHeight);
 			for (let i = 0; i < readyHeight; i++) {
 				readyMatrix[i] = new Array(width).fill(0);
@@ -59,8 +59,8 @@ export default {
 		// 综合矩阵模型（包含合并了准备阶段的容器矩阵模型，以及当前俄罗斯方块矩阵模型）
 		integratedMatrix() {
 			const { currentTetris, combinedMatrix, containerMatrix, level } = this;
-			console.log('containerMatrix', containerMatrix);
-			console.log('combinedMatrix', combinedMatrix);
+			// console.log('containerMatrix', containerMatrix);
+			// console.log('combinedMatrix', combinedMatrix);
 			// 合并了准备阶段的容器矩阵模型的行数
 			const yLen = combinedMatrix.length;
 			// 合并了准备阶段的容器矩阵模型的列数
@@ -77,7 +77,7 @@ export default {
 					matrix[i][j] = new Grid({ color: petrifiedColor });
 				}
 			}
-			console.log('初始化后的综合矩阵模型：', cloneModel(matrix));
+			// console.log('初始化后的综合矩阵模型：', cloneModel(matrix));
 			// 将当前俄罗斯方块插入综合矩阵模型
 			if (currentTetris) {
 				const { matrix: tetrisMatrix, position: { x, y }, color } = currentTetris;
@@ -94,7 +94,7 @@ export default {
 					}
 				}
 			}
-			console.log('插入当前俄罗斯方块的综合矩阵模型：', cloneModel(matrix));
+			// console.log('插入当前俄罗斯方块的综合矩阵模型：', cloneModel(matrix));
 			return matrix;
 		},
 	},
