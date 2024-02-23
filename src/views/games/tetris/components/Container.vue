@@ -10,12 +10,19 @@
 	.redline
 	GameOverView(v-if="gameover")
 	PausedView(v-if="paused")
+	EliminationLine(
+		v-for="(lineIndex, i) in lineIndexListToEliminate"
+		:key="i"
+		:index="lineIndex"
+		:type="lineIndexListToEliminate.length"
+	)
 </template>
 
 <script>
 import GridView from './Grid';
 import GameOverView from './GameOver';
 import PausedView from './Paused';
+import EliminationLine from './EliminationLine';
 import { cloneModel } from '../libs/utils';
 import { Grid } from '../libs/Basic';
 import { TETRIS_LEVEL_COLOR_LIST } from '../libs/consts';
@@ -29,11 +36,13 @@ export default {
 		level: Number,
 		gameover: Boolean,
 		paused: Boolean,
+		lineIndexListToEliminate: Array,
 	},
 	components: {
 		GridView,
 		GameOverView,
 		PausedView,
+		EliminationLine,
 	},
 	data() {
 		return {
@@ -111,11 +120,10 @@ export default {
 
 <style lang="sass" scoped>
 .container-root
-	// opacity: .1
 	position: relative
+	background-color: #000
 	border: 10px solid #fff
 	.grid-box
-		opacity: .1
 		width: 509px
 		height: 1123px
 		display: flex

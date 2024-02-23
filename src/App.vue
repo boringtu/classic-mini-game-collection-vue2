@@ -35,29 +35,20 @@ export default {
 		Vue.prototype.$app = this;
 	},
 	mounted() {
-		this.resizeWindow = throttle(this.resizeWindow.bind(this), 20, true);
-        window.addEventListener('resize', this.resizeWindow);
-        this.resizeWindow();
-
 		document.addEventListener('keydown', this.handleKeydown);
 		document.addEventListener('keyup', this.handleKeyup);
+
+		this.resizeWindow = throttle(this.resizeWindow.bind(this), 20, true);
+        window.addEventListener('resize', this.resizeWindow);
 	},
 	beforeDestroy() {
-		window.removeEventListener('resize', this.resizeWindow);
 		document.removeEventListener('keydown', this.handleKeydown);
 		document.removeEventListener('keyup', this.handleKeyup);
+		window.removeEventListener('resize', this.resizeWindow);
 	},
 	methods: {
         resizeWindow() {
-            // 计算页面缩放比例（0.25 的倍数）
-            const zoom = Math.min(
-				+(Math.floor(document.documentElement.clientHeight / 966 * 4) / 4).toFixed(2),
-				+(Math.floor(document.documentElement.clientWidth / 1920 * 4) / 4).toFixed(2),
-			);
-            // 缩放页面
-            document.body.style.zoom = zoom;
-			// document.body.style.transform = `scale(${ zoom })`;
-			// document.body.style.transformOrigin = 'left top';
+			this.$bus.$emit('resize');
         },
 		// 开始 loading（除本组件与 Loading 组件外，其它组件只允许调用此方法开始 Loading）
 		startLoading() {

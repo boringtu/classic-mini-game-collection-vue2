@@ -38,7 +38,7 @@ export default class Game {
 	// 需要消除的行下标列表
 	lineIndexListToEliminate = [];
 	// 消除行的动画时长
-	durationToEliminate = 500;
+	durationToEliminate = 1200;
 
 	// 获取单例
 	static getInstance(renderCallback) {

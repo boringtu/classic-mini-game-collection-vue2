@@ -81,6 +81,7 @@ export default {
 
 <style lang="sass" scoped>
 .panel-root
+	background-color: #000
 	width: 300px
 	height: 1143px
 	padding: 12px
