@@ -8,6 +8,7 @@
 import Vue from 'vue';
 import Loading from '@/components/Loading';
 import { KEY_ENUM } from '@/assets/js/dicts';
+import { throttle } from '@/libs/utils';
 
 export default {
 	components: {
@@ -34,20 +35,36 @@ export default {
 		Vue.prototype.$app = this;
 	},
 	mounted() {
-		window.addEventListener('keydown', this.handleKeydown);
-		// window.addEventListener('keyup', this.handleKeyup);
+		this.resizeWindow = throttle(this.resizeWindow.bind(this), 20, true);
+        window.addEventListener('resize', this.resizeWindow);
+        this.resizeWindow();
+
+		document.addEventListener('keydown', this.handleKeydown);
+		document.addEventListener('keyup', this.handleKeyup);
 	},
 	beforeDestroy() {
-		window.removeEventListener('keydown', this.handleKeydown);
-		// window.removeEventListener('keyup', this.handleKeyup);
+		window.removeEventListener('resize', this.resizeWindow);
+		document.removeEventListener('keydown', this.handleKeydown);
+		document.removeEventListener('keyup', this.handleKeyup);
 	},
 	methods: {
+        resizeWindow() {
+            // 计算页面缩放比例（0.25 的倍数）
+            const zoom = Math.min(
+				+(Math.floor(document.documentElement.clientHeight / 966 * 4) / 4).toFixed(2),
+				+(Math.floor(document.documentElement.clientWidth / 1920 * 4) / 4).toFixed(2),
+			);
+            // 缩放页面
+            document.body.style.zoom = zoom;
+			// document.body.style.transform = `scale(${ zoom })`;
+			// document.body.style.transformOrigin = 'left top';
+        },
 		// 开始 loading（除本组件与 Loading 组件外，其它组件只允许调用此方法开始 Loading）
 		startLoading() {
 			this.loading = true;
 		},
 		handleKeydown(event) {
-			console.log(event.keyCode);
+			// console.log('keydown: ', event.keyCode);
 			switch (event.keyCode) {
 				// 按 RESET 回到游戏菜单页面
 				case KEY_ENUM.RESET: {
@@ -56,8 +73,9 @@ export default {
 				}
 			}
 		},
-		// handleKeyup(event) {
-		// },
+		handleKeyup(event) {
+			// console.log('keyup: ', event.keyCode);
+		},
 	},
 };
 </script>
