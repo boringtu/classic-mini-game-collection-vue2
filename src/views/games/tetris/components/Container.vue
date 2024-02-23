@@ -8,10 +8,14 @@
 				:data="grid"
 			)
 	.redline
+	GameOverView(v-if="gameover")
+	PausedView(v-if="paused")
 </template>
 
 <script>
 import GridView from './Grid';
+import GameOverView from './GameOver';
+import PausedView from './Paused';
 import { cloneModel } from '../libs/utils';
 import { Grid } from '../libs/Basic';
 import { TETRIS_LEVEL_COLOR_LIST } from '../libs/consts';
@@ -23,9 +27,13 @@ export default {
 		matrix: Array,
 		currentTetris: Object,
 		level: Number,
+		gameover: Boolean,
+		paused: Boolean,
 	},
 	components: {
 		GridView,
+		GameOverView,
+		PausedView,
 	},
 	data() {
 		return {
@@ -107,6 +115,7 @@ export default {
 	position: relative
 	border: 10px solid #fff
 	.grid-box
+		opacity: .1
 		width: 509px
 		height: 1123px
 		display: flex
