@@ -39,6 +39,8 @@ export default class Game {
 	lineIndexListToEliminate = [];
 	// 消除行的动画时长
 	durationToEliminate = 1200;
+	// 是否正在消除行
+	eliminating = false;
 
 	// 获取单例
 	static getInstance(renderCallback) {
@@ -139,7 +141,6 @@ export default class Game {
 		// 停止前一个定时器
 		this.stopFalling();
 		// 开始下落定时器
-		// console.log('speed: ', this.speed);
 		this._handleFalling = setInterval(() => this.fallOneStep(), this.speed);
 	}
 	// 停止下落
@@ -182,8 +183,8 @@ export default class Game {
 	 * @param {boolean} toLeft 是否向左移动
 	 */
 	move(toLeft = false) {
-		// 判断游戏是否已暂停或已 Game Over
-		if (this.paused || this.gameover) return;
+		// 判断游戏是否正在消除行，或已暂停，或已 Game Over
+		if (this.eliminating || this.paused || this.gameover) return;
 		const curr = this.currentTetris;
 		let { matrix: tetrisMatrix, position: { x, y } } = curr;
 		const toX = toLeft ? x - 1 : x + 1;
@@ -199,8 +200,8 @@ export default class Game {
 	 * @param {boolean} rapid - 当前是否是极速下落的状态
 	 */
 	fall(rapid = false) {
-		// 判断游戏是否已暂停或已 Game Over
-		if (this.paused || this.gameover) return;
+		// 判断游戏是否正在消除行，或已暂停，或已 Game Over
+		if (this.eliminating || this.paused || this.gameover) return;
 		// 设置当前是否是极速下落的状态
 		this.setRapid(rapid);
 		// 立即下落一格
@@ -233,15 +234,15 @@ export default class Game {
 	setRapid(rapid) {
 		// 变更当前是否是极速下落的状态
 		this.rapid = rapid;
-		// 判断游戏是否已暂停或已 Game Over
-		if (this.paused || this.gameover) return;
+		// 判断游戏是否正在消除行，或已暂停，或已 Game Over
+		if (this.eliminating || this.paused || this.gameover) return;
 		// 重新开始下落
 		this.startFalling();
 	}
 	// 当前俄罗斯方块旋转一次
 	async spin(clockwise = true) {
-		// 判断游戏是否已暂停或已 Game Over
-		if (this.paused || this.gameover) return;
+		// 判断游戏是否正在消除行，或已暂停，或已 Game Over
+		if (this.eliminating || this.paused || this.gameover) return;
 		const curr = this.currentTetris;
 		let { shape, spinStatus, position: { x, y } } = curr;
 		const [ originX, originY ] = [ x, y ];
@@ -324,7 +325,6 @@ export default class Game {
 	}
 	// 验证给定的俄罗斯方块矩阵模型是否碰撞
 	_checkCollition(tetrisMatrix, { x, y }) {
-		console.log(tetrisMatrix, x, y)
 		const containerMatrix = this.matrix;
 		// 给定俄罗斯方块矩阵模型的行数
 		const yLen = tetrisMatrix.length;
@@ -370,7 +370,9 @@ export default class Game {
 			// 推送渲染数据
 			this.render();
 			// 消除动画进行时间
+			this.eliminating = true;
 			await sleep(this.durationToEliminate);
+			this.eliminating = false;
 		}
 		// 将当前俄罗斯方块石化到容器矩阵模型中
 		this._petrifyTetrisToContainer();
