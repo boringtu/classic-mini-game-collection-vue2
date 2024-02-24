@@ -1,15 +1,6 @@
 import { ELIMINATION_TYPE_DICT, TETRIS_SPIN_STATUS_ENUM } from './consts';
 
 /**
- * clone 数据模型（只支持纯 JSON 数据模型 object | array）
- * @param {object | array} model 数据模型
- * @returns clone 后的数据模型
- */
-export const cloneModel = (model) => {
-	return JSON.parse(JSON.stringify(model));
-}
-
-/**
  * 将给定矩阵顺时针旋转指定次数 90°
  *
  * @param {array} matrix - 要旋转的矩阵

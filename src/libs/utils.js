@@ -70,6 +70,15 @@ export function parseJSON(str, ...extraInfo) {
 }
 
 /**
+ * clone 数据模型（只支持纯 JSON 数据模型 object | array）
+ * @param {object | array} model 数据模型
+ * @returns clone 后的数据模型
+ */
+export const cloneModel = (model) => {
+	return JSON.parse(JSON.stringify(model));
+}
+
+/**
  * 蹦床
  * 用于优化尾递归函数
  *
@@ -102,19 +111,6 @@ export const getKeyByValue = (dict, value) => {
 };
 
 /**
- * 在新浏览器标签页打开链接
- */
-export const openUrl = (url) => {
-	const link = document.createElement('a');
-	link.style.display = 'none';
-	link.href = url;
-	link.setAttribute('target', '_blank');
-	document.body.appendChild(link);
-	link.click();
-	link.remove();
-};
-
-/**
  * 两集合差集
  */
 export const difference = (arrA, arrB) => {
@@ -130,17 +126,6 @@ export const difference = (arrA, arrB) => {
 export const precision = (num, digit = 2, method = 'round') => {
 	const multiple = Math.pow(10, digit);
 	return (Math[method](num * multiple) / multiple).toFixed(digit);
-};
-
-export const escapeHtml = (text) => {
-	const map = {
-		'&': '&amp;',
-		'<': '&lt;',
-		'>': '&gt;',
-		'"': '&quot;',
-		"'": '&#039;',
-	};
-	return text.replace(/[&<>"']/g, (m) => map[m]);
 };
 
 /**
@@ -171,27 +156,4 @@ export const randomColor = ({
 		case 'rgb':
 			return (complete ? 'rgb(' : '') + arr.join(',') + (complete ? ')' : '');
 	}
-};
-
-/**
- * （chart 专用）根据“一系列数字”和“间隔数量”，计算得出合适与 y 轴显示的 interval、max、min
- * @param nums {Number[]} 一系列数字
- * @param size {Number} 间隔数量
- * @return [ interval, max, min ]
- */
-export const calcYAxisNums = (nums, size) => {
-	if (!nums.length) return [1, size, 0];
-	let max = Math.max(...nums);
-	max = Math[max < 0 ? 'floor' : 'ceil'](max);
-	let min = Math.min(...nums);
-	min = Math[min < 0 ? 'floor' : 'ceil'](min);
-	// 如果最小值是正数，则最小值取 0
-	min = min > 0 ? 0 : min;
-	// 目前 min 到 max 的跨度
-	const span = Math.ceil(Math.max(max - min, Math.abs(max), Math.abs(min)));
-	let interval = Math.ceil(span / size);
-	interval = interval < 1 ? 1 : interval;
-	// 根据 min 和 interval 重新反推出 max
-	max = Math.round(interval * size + min);
-	return [interval, max, min];
 };

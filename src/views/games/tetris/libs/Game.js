@@ -1,6 +1,6 @@
-import { sleep } from '@/libs/utils';
+import { sleep, cloneModel } from '@/libs/utils';
 import { TETRIS_SHAPE_CLASS_MAP } from './Basic';
-import { calcScore, cloneModel, getRandomTetris, spinMatrix } from './utils';
+import { calcScore, getRandomTetris, spinMatrix } from './utils';
 import { TETRIS_SHAPE_ENUM, TETRIS_SHAPE_MATRIX } from './consts';
 
 /**
@@ -75,11 +75,7 @@ export default class Game {
 	restart() {
 		const { width, height } = this;
 		// 初始化容器矩阵模型
-		const matrix = new Array(height);
-		for (let i = 0; i < height; i++) {
-			matrix[i] = new Array(width).fill(0);
-		}
-		this.matrix = matrix;
+		this.matrix = new Array(height).fill(0).map(() => new Array(width).fill(0));
 		// 重置当前俄罗斯方块
 		this.currentTetris = null;
 		// 重置下一个俄罗斯方块

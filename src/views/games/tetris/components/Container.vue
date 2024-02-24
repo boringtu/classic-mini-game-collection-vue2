@@ -23,7 +23,7 @@ import GridView from './Grid';
 import GameOverView from './GameOver';
 import PausedView from './Paused';
 import EliminationLine from './EliminationLine';
-import { cloneModel } from '../libs/utils';
+import { cloneModel } from '@/libs/utils';
 import { Grid } from '../libs/Basic';
 import { TETRIS_LEVEL_COLOR_LIST } from '../libs/consts';
 
