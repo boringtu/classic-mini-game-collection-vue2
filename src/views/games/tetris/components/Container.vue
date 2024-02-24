@@ -126,6 +126,7 @@ export default {
 	.grid-box
 		width: 509px
 		height: 1123px
+		padding: 1px 0
 		display: flex
 		flex-wrap: wrap
 		row-gap: 1px
@@ -138,7 +139,7 @@ export default {
 		position: absolute
 		z-index: 10
 		left: 0
-		bottom: calc(51px * 20 + 1px)
+		bottom: calc(51px * 20)
 		width: 100%
 		height: 1px
 		background-color: red
