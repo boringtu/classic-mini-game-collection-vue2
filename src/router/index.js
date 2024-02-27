@@ -13,6 +13,10 @@ const routes = [
 		path: '/games/tetris',
 		component: () => import('@/views/games/tetris'),
 	},
+	{
+		path: '/games/snake',
+		component: () => import('@/views/games/snake'),
+	},
 ];
 
 const router = new VueRouter({

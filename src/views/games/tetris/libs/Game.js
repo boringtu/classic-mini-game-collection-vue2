@@ -26,7 +26,7 @@ export default class Game {
 	// 当前游戏等级
 	level = 0;
 	// 统计数据
-	stats = {};
+	stats = null;
 	// 极速下落的速度
 	maxSpeed = 60;
 	// 当前是否是极速下落的状态
@@ -36,7 +36,7 @@ export default class Game {
 	// 是否已暂停
 	paused = false;
 	// 需要消除的行下标列表
-	lineIndexListToEliminate = [];
+	lineIndexListToEliminate = null;
 	// 消除行的动画时长
 	durationToEliminate = 1200;
 	// 是否正在消除行
@@ -215,16 +215,14 @@ export default class Game {
 			this.paused = false;
 			// 继续下落
 			this.startFalling();
-			// 推送渲染数据
-			this.render();
 		} else {
 			// 设置暂停状态为暂停游戏状态
 			this.paused = true;
 			// 停止下落
 			this.stopFalling();
-			// 推送渲染数据
-			this.render();
 		}
+		// 推送渲染数据
+		this.render();
 	}
 	// 改变降落速度（主动极速下落，或者按当前等级默认速度下落）
 	setRapid(rapid) {
