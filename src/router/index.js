@@ -17,6 +17,10 @@ const routes = [
 		path: '/games/snake',
 		component: () => import('@/views/games/snake'),
 	},
+	{
+		path: '/games/sokoban',
+		component: () => import('@/views/games/sokoban'),
+	},
 ];
 
 const router = new VueRouter({
