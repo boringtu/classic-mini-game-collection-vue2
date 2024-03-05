@@ -6,7 +6,30 @@
 	.panel-box
 		h2 STEP
 		strong {{ step }}
-	.panel-box.placeholder-box
+	.panel-box.tips-box
+		h2 TIPS
+		ul
+			li
+				label UP
+				span MOVE UP
+			li
+				label DOWN
+				span MOVE DOWN
+			li
+				label LEFT
+				span MOVE LEFT
+			li
+				label RIGHT
+				span MOVE RIGHT
+			li
+				label B
+				span REVOKE
+			li
+				label A
+				span NEXT LEVEL
+			li
+				label SEL
+				span SHOW LEVEL LIST
 		img(src="/static/images/cat.gif")
 </template>
 
@@ -41,8 +64,28 @@ export default {
 		strong
 			color: #fff
 			margin-top: 24px
-		&.placeholder-box
+		&.tips-box
 			flex: 1
 			display: flex
-			justify-content: flex-end
+			flex-direction: column
+			align-items: stretch
+			ul
+				margin-top: 24px
+				flex: 1
+				display: flex
+				flex-direction: column
+				li
+					text-align: left
+					white-space: nowrap
+					display: flex
+					flex-direction: column
+					label
+						color: #eb974c
+						font-size: 20px
+					span
+						color: #86bed9
+						margin-top: 12px
+						font-size: 15px
+					+ li
+						margin-top: 24px
 </style>

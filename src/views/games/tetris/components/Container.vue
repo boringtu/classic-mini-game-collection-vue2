@@ -131,10 +131,6 @@ export default {
 		flex-wrap: wrap
 		row-gap: 1px
 		column-gap: 1px
-		.grid
-			width: 50px
-			height: 50px
-			border-radius: 8px
 	.redline
 		position: absolute
 		z-index: 10

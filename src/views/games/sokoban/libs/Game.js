@@ -220,6 +220,7 @@ export default class Game {
 			step: this.step,
 			worker: this.worker,
 			boxes: this.boxes,
+			passing: this.passing,
 		};
 		this.renderCallback(data);
 	}

@@ -1,0 +1,6 @@
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" class="icon"
+	style="width: 1em;height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024"
+	version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1847" width="1024" height="1024">
+	<path d="M0 0h512v512H0z m512 512h512v512H512z" fill="#333" p-id="1848"></path>
+	<path d="M512 0h512v512H512zM0 512h512v512H0z" fill="#222" p-id="1849"></path>
+</svg>

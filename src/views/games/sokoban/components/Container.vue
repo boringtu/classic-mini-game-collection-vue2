@@ -7,18 +7,21 @@
 				:key="`${i}-${j}`"
 				:value="v"
 			)
-	.redline
+	WellDone(v-if="passing")
 </template>
 
 <script>
 import GridView from './Grid';
+import WellDone from './WellDone';
 
 export default {
 	props: {
 		matrix: Array,
+		passing: Boolean,
 	},
 	components: {
 		GridView,
+		WellDone,
 	},
 }
 </script>
@@ -36,17 +39,4 @@ export default {
 		flex-wrap: wrap
 		row-gap: 1px
 		column-gap: 1px
-		.grid
-			width: 50px
-			height: 50px
-			border-radius: 8px
-	.redline
-		position: absolute
-		z-index: 10
-		left: 0
-		bottom: calc(51px * 20)
-		width: 100%
-		height: 1px
-		background-color: red
-		opacity: .25
 </style>
