@@ -30,6 +30,8 @@ export default class Game {
 	boxes = null;
 	// 历史记录
 	history = null;
+	// 当前过关状态
+	passing = false;
 
 	// 获取单例
 	static getInstance(renderCallback) {
@@ -80,14 +82,12 @@ export default class Game {
 			}
 		}
 		this.matrix = matrix;
-		// 追加历史记录
-		this._addHistory();
 	}
 	/**
 	 * 移动工人
 	 */
 	move(direction) {
-		console.log(direction);
+		if (this.passing) return;
 		const { matrix, worker } = this;
 		const [wx, wy] = worker;
 		let tx, ty;
@@ -119,11 +119,16 @@ export default class Game {
 			const fy = ty + (ty - wy);
 			// 判断箱子前面的位置是否是墙或箱子
 			if ((matrix[fy][fx] & DIGIT_TYPE_ENUM.WALL) || (matrix[fy][fx] & DIGIT_TYPE_ENUM.BOX)) return;
+			// 追加历史记录
+			this._addHistory();
 			// 移动箱子
 			matrix[ty][tx] ^= DIGIT_TYPE_ENUM.BOX;
 			matrix[fy][fx] ^= DIGIT_TYPE_ENUM.BOX;
 			const i = this.boxes.findIndex((box) => coordinateComparison(box, [tx, ty]));
 			this.boxes[i] = [fx, fy];
+		} else {
+			// 追加历史记录
+			this._addHistory();
 		}
 		// 移动工人
 		matrix[wy][wx] ^= DIGIT_TYPE_ENUM.WORKER;
@@ -131,17 +136,47 @@ export default class Game {
 		this.worker = [tx, ty];
 		// 步数加一
 		this.step++;
-		// 追加历史记录
-		this._addHistory();
+		// 验证是否已过关
+		if (this._checkPass()) {
+			// 设置过关状态
+			this.passing = true;
+			// 持久化存储的最高关卡数
+			localStorage.setItem(
+				STORATE_LEVEL_KEY,
+				Math.max(this.level + 1, +localStorage.getItem(STORATE_LEVEL_KEY) || 1)
+			);
+		}
 		// 推送渲染数据
 		this.render();
 	}
 	/**
+	 * 撤销上一步操作
+	 */
+	revoke() {
+		if (this.passing) return;
+		if (!this.history.length) return;
+		this.step++;
+		const { matrix, worker, boxes } = this.history.pop();
+		this.matrix = matrix;
+		this.worker = worker;
+		this.boxes = boxes;
+		// 推送渲染数据
+		this.render();
+	}
+	/**
+	 * 开始下一关
+	 */
+	nextLevel() {
+		if (!this.passing) return;
+		// 开始下一关
+		this.restart(++this.level);
+	}
+	/**
 	 * 重置游戏
 	 */
-	restart() {
+	restart(level) {
 		// 获取持久化存储的当前关卡数
-		this.level = +localStorage.getItem(STORATE_LEVEL_KEY) || 1;
+		this.level = level || +localStorage.getItem(STORATE_LEVEL_KEY) || 1;
 		// 重置移动步数
 		this.step = 0;
 		// 重置工人
@@ -150,10 +185,19 @@ export default class Game {
 		this.boxes = [];
 		// 重置历史记录
 		this.history = [];
+		// 重置当前是否过关状态
+		this.passing = false;
 		// 初始化综合矩阵模型
 		this.initMatrix();
 		// 推送渲染数据
 		this.render();
+	}
+	/**
+	 * 验证是否已过关
+	 */
+	_checkPass() {
+		const { matrix, boxes } = this;
+		return boxes.every(([x, y]) => matrix[y][x] & DIGIT_TYPE_ENUM.POINT);
 	}
 	/**
 	 * 追加历史记录
