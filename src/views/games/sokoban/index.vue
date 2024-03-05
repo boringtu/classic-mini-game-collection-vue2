@@ -2,6 +2,12 @@
 .root.bg_1(ref="root")
 	Container(v-if="gameData" v-bind="gameData")
 	Panel(v-if="gameData" v-bind="gameData")
+	LevelList(
+		v-if="visibleLevelList"
+		v-bind="gameData"
+		:game="game"
+		@close="visibleLevelList = false"
+	)
 </template>
 
 <script>
@@ -9,6 +15,7 @@ import { KEY_ENUM } from '@/assets/js/dicts';
 import Game from './libs/Game';
 import Container from './components/Container';
 import Panel from './components/Panel';
+import LevelList from './components/LevelList';
 
 // 用于缓存当前已按下的按键
 const keyMap = {};
@@ -17,13 +24,17 @@ export default {
 	components: {
 		Container,
 		Panel,
+		LevelList,
 	},
 	data() {
 		return {
+			game: null,
 			gameData: null,
+			visibleLevelList: false,
 		};
 	},
 	mounted() {
+		window.x = this;
 		this.game = Game.getInstance(this.renderCallback);
 		window.game = this.game;
 
@@ -40,6 +51,7 @@ export default {
 		this.$bus.$off('resize', this.resizeWindow);
 
 		this.game.destroy();
+		this.game = null;
 	},
 	methods: {
         resizeWindow() {
@@ -52,6 +64,7 @@ export default {
             this.$refs.root.style.zoom = zoom;
         },
 		handleKeydown(event) {
+			if (this.visibleLevelList) return;
 			switch (event.keyCode) {
 				case 90: {
 					// z
@@ -101,22 +114,62 @@ export default {
 					this.game.move(KEY_ENUM.UP);
 					break;
 				}
+				// 按 SINGLE_B 撤销上一步操作
+				case KEY_ENUM.SINGLE_B: {
+					if (keyMap[KEY_ENUM.SINGLE_B]) return;
+					keyMap[KEY_ENUM.SINGLE_B] = 1;
+					this.game.revoke();
+					break;
+				}
+				// 按 SINGLE_A 开始下一关
+				case KEY_ENUM.SINGLE_A: {
+					if (keyMap[KEY_ENUM.SINGLE_A]) return;
+					keyMap[KEY_ENUM.SINGLE_A] = 1;
+					this.game.nextLevel();
+					break;
+				}
+				// 按 SELECT 显示关卡列表
+				case KEY_ENUM.SELECT: {
+					this.visibleLevelList = true;
+					break;
+				}
 			}
 		},
 		handleKeyup(event) {
+			if (this.visibleLevelList) return;
 			switch (event.keyCode) {
-				// 松开 A 或 LEFT 或 D 或 S 或 DOWN 或 W 或 UP 停止屏蔽按键长按状态
+				// 松开 A 或 LEFT 停止屏蔽按键长按状态
 				case KEY_ENUM.A:
-				case KEY_ENUM.LEFT:
+				case KEY_ENUM.LEFT: {
+					delete keyMap[KEY_ENUM.LEFT];
+					break;
+				}
+				// 松开 D 或 RIGHT 停止屏蔽按键长按状态
 				case KEY_ENUM.D:
+				case KEY_ENUM.RIGHT: {
+					delete keyMap[KEY_ENUM.RIGHT];
+					break;
+				}
+				// 松开 S 或 DOWN 停止屏蔽按键长按状态
 				case KEY_ENUM.S:
-				case KEY_ENUM.DOWN:
+				case KEY_ENUM.DOWN: {
+					delete keyMap[KEY_ENUM.DOWN];
+					break;
+				}
+				// 松开 W 或 UP 停止屏蔽按键长按状态
 				case KEY_ENUM.W:
 				case KEY_ENUM.UP: {
-					delete keyMap[KEY_ENUM.LEFT];
-					delete keyMap[KEY_ENUM.RIGHT];
-					delete keyMap[KEY_ENUM.DOWN];
 					delete keyMap[KEY_ENUM.UP];
+					break;
+				}
+				// 松开 SINGLE_B 停止屏蔽按键长按状态
+				case KEY_ENUM.SINGLE_B: {
+					delete keyMap[KEY_ENUM.SINGLE_B];
+					break;
+				}
+				// 松开 SINGLE_A 停止屏蔽按键长按状态
+				case KEY_ENUM.SINGLE_A: {
+					delete keyMap[KEY_ENUM.SINGLE_A];
 					break;
 				}
 			}
@@ -131,8 +184,8 @@ export default {
 
 <style lang="sass" scoped>
 .root
-	background-color: #000
 	position: fixed
+	z-index: 1
 	top: 0
 	right: 0
 	bottom: 0

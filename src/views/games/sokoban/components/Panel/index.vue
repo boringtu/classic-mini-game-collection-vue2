@@ -1,14 +1,11 @@
 <template lang="pug">
 .panel-root
 	.panel-box
-		h2 SCORE
-		strong {{ score }}
-	.panel-box
 		h2 LEVEL
 		strong {{ level }}
 	.panel-box
-		h2 SIZE
-		strong {{ size }}
+		h2 STEP
+		strong {{ step }}
 	.panel-box.placeholder-box
 		img(src="/static/images/cat.gif")
 </template>
@@ -16,9 +13,8 @@
 <script>
 export default {
 	props: {
-		score: Number,
 		level: Number,
-		size: Number,
+		step: Number,
 	},
 }
 </script>

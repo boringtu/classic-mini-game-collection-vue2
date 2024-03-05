@@ -41,6 +41,7 @@ export default {
 		this.$bus.$off('resize', this.resizeWindow);
 
 		this.game.destroy();
+		this.game = null;
 	},
 	methods: {
         resizeWindow() {

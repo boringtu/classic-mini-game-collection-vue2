@@ -14,7 +14,7 @@ export default {
 		gridClass() {
 			const { value } = this;
 			const list = [];
-			if (value & DIGIT_TYPE_ENUM.EMPTY) list.push('empty');
+			if (!value) list.push('empty');
 			if (value & DIGIT_TYPE_ENUM.FLOOR) list.push('floor');
 			if (value & DIGIT_TYPE_ENUM.POINT) list.push('point');
 			if (value & DIGIT_TYPE_ENUM.WALL) list.push('wall');
