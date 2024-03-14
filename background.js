@@ -1,6 +1,8 @@
 const { app, BrowserWindow, screen, ipcMain, nativeTheme } = require('electron');
 const path = require('path');
 
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+
 // 热加载
 try {
 	require('electron-reloader')(module, {});
@@ -8,13 +10,24 @@ try {
 
 const createWindow = () => {
 	const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-	const win = new BrowserWindow({ width, height });
+	const win = new BrowserWindow({
+		width,
+		height,
+		webPreferences: {
+			// nodeIntegration: true,
+			// contextIsolation: false,
+		},
+	});
 	// 判断当前环境
 	if (process.env.NODE_ENV === 'development') {
-		win.webContents.openDevTools(); // 自动打开工作台
-		win.loadURL('http://localhost:8080'); // 加载本地服务地址
+		// 自动打开工作台
+		win.webContents.openDevTools();
+		// 加载本地服务地址
+		win.loadURL('http://localhost:8080'); 
+		// win.loadFile('./dist/index.html');
 	} else {
-		win.loadFile('./dist/index.html'); // 加载打包后的静态页面
+		// 加载打包后的静态页面
+		win.loadFile('./dist/index.html');
 	}
 };
 
