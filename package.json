@@ -11,7 +11,8 @@
     "gen-font": "node ./fontmin",
     "start": "cross-env NODE_ENV=development electron-forge start",
     "package": "electron-forge package",
-    "make": "cross-env NODE_ENV=production electron-forge make"
+    "make": "cross-env NODE_ENV=production electron-forge make",
+    "make:win32": "cross-env NODE_ENV=production electron-forge make --arch=x64 --platform=win32"
   },
   "dependencies": {
     "core-js": "^3.8.3",
