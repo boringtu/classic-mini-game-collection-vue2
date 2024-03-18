@@ -2,11 +2,11 @@
 
 @font-face {
 	font-family: "8bit-cn";
-	src: url("../../../public/static/fonts/MisekiBitmapMincho.ttf");
+	src: url("../../../public/static/fonts/8bit-cn.ttf");
 }
 @font-face {
 	font-family: "8bit";
-	src: url("../../../public/static/fonts/PressStart2P-Regular.ttf");
+	src: url("../../../public/static/fonts/8bit.ttf");
 }
 
 * {
