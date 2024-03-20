@@ -8,7 +8,7 @@
 import Vue from 'vue';
 import Loading from '@/components/Loading';
 import { KEY_ENUM } from '@/assets/js/dicts';
-import { throttle } from '@/libs/utils';
+import { throttle, sleep } from '@/libs/utils';
 
 export default {
 	components: {
@@ -51,8 +51,10 @@ export default {
 			this.$bus.$emit('resize');
         },
 		// 开始 loading（除本组件与 Loading 组件外，其它组件只允许调用此方法开始 Loading）
-		startLoading() {
+		async startLoading() {
 			this.loading = true;
+			await sleep(1500);
+			this.loading = false;
 		},
 		handleKeydown(event) {
 			// console.log('keydown: ', event.keyCode);

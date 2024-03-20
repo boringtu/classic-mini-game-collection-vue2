@@ -1,6 +1,6 @@
 <template>
-<div class="loading-root" :class="{ loading, 'bg-reset': !loading }">
-
+<div class="loading-root" :class="{ loading }">
+	<img src="@/assets/images/icon.png" />
 </div>
 </template>
 
@@ -29,9 +29,7 @@ export default {
 
 <style lang="sass" scoped>
 @import "./keyframes.scss"
-.bg-reset
-	animation: none
-	opacity: 0
+
 .loading-root
 	position: fixed
 	z-index: 100000
@@ -40,6 +38,12 @@ export default {
 	bottom: 0
 	left: 0
 	background-color: #000
+	display: flex
+	justify-content: center
+	align-items: center
+	opacity: 1
 	&.loading
-		animation: bg-fade-in 1s ease-out forwards
+		animation: bg-fade-out .5s ease-in 1s forwards
+		img
+			animation: bounce-in-top 1s forwards, slide-out-top 0.4s cubic-bezier(0.550, 0.085, 0.680, 0.530) 1.1s forwards
 </style>
