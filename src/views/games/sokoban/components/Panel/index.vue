@@ -30,7 +30,7 @@
 			li
 				label SEL
 				span SHOW LEVEL LIST
-		img(src="/static/images/cat.gif")
+		img(src="@/assets/images/cat.gif")
 </template>
 
 <script>

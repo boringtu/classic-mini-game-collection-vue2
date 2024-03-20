@@ -10,7 +10,7 @@
 		h2 SIZE
 		strong {{ size }}
 	.panel-box.placeholder-box
-		img(src="/static/images/cat.gif")
+		img(src="@/assets/images/cat.gif")
 </template>
 
 <script>

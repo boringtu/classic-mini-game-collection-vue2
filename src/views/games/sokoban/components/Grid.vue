@@ -7,7 +7,7 @@
 	template(v-if="value & DIGIT_TYPE_ENUM.BOX")
 		img.box(:src="imgBox")
 	template(v-if="value & DIGIT_TYPE_ENUM.WORKER")
-		img.worker(src="/static/images/cat.gif")
+		img.worker(src="@/assets/images/cat.gif")
 </template>
 
 <script>
