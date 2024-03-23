@@ -74,13 +74,6 @@ class TetrisShape extends Grid {
 		this._spinStatus = spinStatus;
 		this._matrix = spinMatrix(TETRIS_SHAPE_MATRIX[this._shape], spinStatus);
 	}
-	// // 初始化当前俄罗斯方块的位置
-	// initPosition() {
-	// 	// 当前形状当前旋转状态下的俄罗斯方块的矩阵模型
-	// 	const matrix = spinMatrix(TETRIS_SHAPE_MATRIX[this._shape], this._spinStatus);
-	// 	this._x = matrix[0].;
-	// 	this._y = 0;
-	// }
 }
 
 class TetrisShapeLine extends TetrisShape {
